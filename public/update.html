@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualización L.A.N.G.</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+        }
+        button {
+            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .update-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        .update-btn:hover {
+            background: #c0392b;
+        }
+        .continue-btn {
+            background: #27ae60;
+            color: white;
+        }
+        .continue-btn:hover {
+            background: #219a52;
+        }
+        .warning {
+            background: rgba(241, 196, 15, 0.2);
+            border: 2px solid #f1c40f;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Actualización del Sistema L.A.N.G.</h1>
+        
+        <div class="warning">
+            <h3>⚠️ Atención</h3>
+            <p>Se han detectado actualizaciones importantes:</p>
+            <ul style="text-align: left;">
+                <li>✅ Nuevas categorías industriales</li>
+                <li>✅ Productos de ejemplo actualizados</li>
+                <li>✅ Opción "Por Metros" en tipos de manejo</li>
+                <li>✅ Corrección del botón cerrar sesión</li>
+            </ul>
+        </div>
+
+        <p>Para aplicar las actualizaciones, presiona el botón rojo. Esto limpiará los datos anteriores y aplicará las mejoras.</p>
+        
+        <button class="update-btn" onclick="forceUpdate()">
+            🔄 ACTUALIZAR SISTEMA
+        </button>
+        
+        <button class="continue-btn" onclick="continueWithoutUpdate()">
+            ➡️ Continuar sin actualizar
+        </button>
+
+        <p style="font-size: 0.9em; margin-top: 2rem; opacity: 0.8;">
+            Los datos de productos y movimientos serán restablecidos a los ejemplos industriales.
+        </p>
+    </div>
+
+    <script>
+        function forceUpdate() {
+            console.log('🔄 Iniciando actualización forzada del sistema...');
+
+            // Limpiar todos los datos existentes
+            localStorage.removeItem('bodega_users');
+            localStorage.removeItem('bodega_categories');
+            localStorage.removeItem('bodega_inventory');
+            localStorage.removeItem('bodega_movements');
+            localStorage.removeItem('bodega_suppliers');
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('userInfo');
+            localStorage.removeItem('loginTime');
+
+            alert('✅ Sistema actualizado exitosamente!\n\nSerás redirigido al login con las nuevas características.');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+
+        function continueWithoutUpdate() {
+            window.location.href = 'index.html';
+        }
+
+        console.log('📋 Página de actualización cargada');
+        console.log('🏭 L.A.N.G. - Sistema de Control de Bodega');
+    </script>
+</body>
+</html>

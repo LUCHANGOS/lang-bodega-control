@@ -368,7 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('username');
         localStorage.removeItem('userInfo');
         localStorage.removeItem('loginTime');
-        window.location.href = 'index.html';
+        // Redirigir a la página de login con la ruta completa
+        window.location.href = window.location.origin + window.location.pathname.replace('dashboard.html', 'index.html');
     };
 
     // Agregar evento al botón de cerrar sesión si existe
