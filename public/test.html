@@ -66,17 +66,19 @@
         <div id="message" class="message hidden"></div>
         
         <div style="margin-top: 1rem; font-size: 0.8em;">
-            <p><strong>Usuarios de prueba:</strong></p>
-            <p>admin / admin123</p>
-            <p>luis / luis123</p>
+            <p><strong>Usuarios disponibles:</strong></p>
+            <p>zaida / zaida123 (Admin)</p>
+            <p>giselle / giselle123 (Admin)</p>
+            <p>luis / luis123 (Operador)</p>
         </div>
     </div>
 
     <script>
         // Base de datos de usuarios simple
         const users = {
-            'admin': { password: 'admin123', name: 'Administrador' },
-            'luis': { password: 'luis123', name: 'Luis Nicolás' }
+            'zaida': { password: 'zaida123', name: 'Zaida' },
+            'giselle': { password: 'giselle123', name: 'Giselle' },
+            'luis': { password: 'luis123', name: 'Luis' }
         };
 
         document.getElementById('testForm').addEventListener('submit', function(e) {

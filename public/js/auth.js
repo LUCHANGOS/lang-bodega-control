@@ -1,27 +1,30 @@
 // Base de datos de usuarios en localStorage
 function initializeUsers() {
+    // Forzar actualización de usuarios (remover esta línea después de la primera carga)
+    localStorage.removeItem('bodega_users');
+    
     if (!localStorage.getItem('bodega_users')) {
         const users = {
-            'admin': {
-                username: 'admin',
-                password: 'admin123',
-                fullName: 'Administrador LANG',
+            'zaida': {
+                username: 'zaida',
+                password: 'zaida123',
+                fullName: 'Zaida',
                 role: 'admin',
-                email: 'admin@lang.com'
+                email: 'zaida@lang.com'
+            },
+            'giselle': {
+                username: 'giselle',
+                password: 'giselle123',
+                fullName: 'Giselle',
+                role: 'admin',
+                email: 'giselle@lang.com'
             },
             'luis': {
                 username: 'luis',
                 password: 'luis123',
-                fullName: 'Luis Nicolás',
+                fullName: 'Luis',
                 role: 'operator',
                 email: 'luis@lang.com'
-            },
-            'operador': {
-                username: 'operador',
-                password: 'op123',
-                fullName: 'Operador Bodega',
-                role: 'operator',
-                email: 'operador@lang.com'
             }
         };
         localStorage.setItem('bodega_users', JSON.stringify(users));
