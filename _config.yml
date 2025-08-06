@@ -1,0 +1,28 @@
+# Configuración de GitHub Pages para Sistema de Bodega
+title: "Sistema de Control de Bodega"
+description: "Sistema de gestión de inventario - Acceso restringido"
+
+# Incluir archivos estáticos
+include:
+  - public/
+  - docs/
+
+# Excluir archivos innecesarios
+exclude:
+  - node_modules/
+  - .gitignore
+  - package.json
+  - package-lock.json
+  - .env.example
+
+# Configuración de tema (opcional)
+theme: minima
+
+# Configuración de plugins
+plugins:
+  - jekyll-relative-links
+
+# Configuración de enlaces relativos
+relative_links:
+  enabled: true
+  collections: true
