@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SATTEL CHILE® Control de Bodega</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+    <!-- Header principal -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo-header">
+                <i class="fas fa-warehouse"></i>
+                <span>SATTEL CHILE® - Control de Bodega</span>
+            </div>
+            
+            <div class="header-actions">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="username">Usuario</span>
+                </div>
+                <button id="logoutBtn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación -->
+    <nav class="dashboard-nav">
+        <div class="nav-content">
+            <button class="nav-btn active" data-section="inventory">
+                <i class="fas fa-boxes"></i> Inventario
+            </button>
+            <button class="nav-btn" data-section="movements">
+                <i class="fas fa-exchange-alt"></i> Movimientos
+            </button>
+            <button class="nav-btn" data-section="reports">
+                <i class="fas fa-chart-bar"></i> Reportes
+            </button>
+            <button class="nav-btn" data-section="add-product">
+                <i class="fas fa-plus-circle"></i> Agregar Producto
+            </button>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="dashboard-main">
+        <!-- Sección de Inventario -->
+        <section id="inventory-section" class="content-section active">
+            <div class="section-header">
+                <h2><i class="fas fa-boxes"></i> Inventario por Categorías</h2>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Buscar productos...">
+                    <button id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtros por categorías -->
+            <div class="categories-filter">
+                <button class="filter-btn active" data-category="all">
+                    <i class="fas fa-th-large"></i> Todas
+                </button>
+                <div id="categoriesButtons"></div>
+            </div>
+
+            <!-- Alertas de stock bajo -->
+            <div id="lowStockAlert" class="alert alert-warning hidden">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Hay productos con stock bajo</span>
+                <button id="viewLowStock">Ver detalles</button>
+            </div>
+
+            <!-- Tabla de productos -->
+            <div class="table-container">
+                <table id="productsTable" class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- Productos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sección de Movimientos -->
+        <section id="movements-section" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-exchange-alt"></i> Historial de Movimientos</h2>
+                <div class="date-filter">
+                    <input type="date" id="movementDate" value="">
+                    <button id="filterMovements">Filtrar</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="movements-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th>Cantidad</th>
+                            <th>Responsable</th>
+                            <th>Motivo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movementsTableBody">
+                        <!-- Movimientos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sección de Reportes -->
+        <section id="reports-section" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-bar"></i> Generación de Reportes</h2>
+            </div>
+
+            <div class="reports-grid">
+                <div class="report-card">
+                    <div class="report-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3>Inventario Completo</h3>
+                    <p>Reporte detallado de todos los productos en bodega</p>
+                    <button class="report-btn" data-report="inventory-full">
+                        <i class="fas fa-download"></i> Generar PDF
+                    </button>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <h3>Movimientos Diarios</h3>
+                    <p>Entradas y salidas del día actual</p>
+                    <button class="report-btn" data-report="daily-movements">
+                        <i class="fas fa-download"></i> Generar PDF
+                    </button>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Stock Bajo</h3>
+                    <p>Productos que requieren reabastecimiento</p>
+                    <button class="report-btn" data-report="low-stock">
+                        <i class="fas fa-download"></i> Generar PDF
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Agregar Producto -->
+        <section id="add-product-section" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h2>
+            </div>
+
+            <div class="form-container">
+                <form id="addProductForm" class="product-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productCode">
+                                <i class="fas fa-barcode"></i> Código del Producto
+                            </label>
+                            <input type="text" id="productCode" name="code" required placeholder="Ej: PERN001">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productCategory">
+                                <i class="fas fa-tags"></i> Categoría
+                            </label>
+                            <select id="productCategory" name="category_id" required style="width: 100%; padding: 0.5rem; border-radius: 4px; border: none; background-color: #34495e; color: #fff; font-size: 0.9rem;">
+                                <option value="">Seleccionar categoría...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productName">
+                            <i class="fas fa-box"></i> Nombre del Producto
+                        </label>
+                        <input type="text" id="productName" name="name" required placeholder="Nombre descriptivo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDescription">
+                            <i class="fas fa-align-left"></i> Descripción
+                        </label>
+                        <textarea id="productDescription" name="description" placeholder="Descripción detallada (opcional)"></textarea>
+                    </div>
+
+                    <!-- Tipo de unidad y configuración de peso -->
+                    <div class="form-group">
+                        <label for="unitType">
+                            <i class="fas fa-balance-scale"></i> Tipo de Manejo
+                        </label>
+                        <select id="unitType" name="unit_type" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: none; background-color: #34495e; color: #fff; font-size: 0.9rem;">
+                            <option value="unidad">Por Unidad</option>
+                            <option value="peso">Por Peso (Pernería)</option>
+                        </select>
+                    </div>
+
+                    <!-- Campos específicos para productos por peso -->
+                    <div id="weightFields" class="weight-fields hidden">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="weightPerUnit">
+                                    <i class="fas fa-weight-hanging"></i> Peso por Unidad (kg)
+                                </label>
+                                <input type="number" id="weightPerUnit" name="weight_per_unit" step="0.001" min="0.001" placeholder="0.025">
+                                <small style="color: #bdc3c7;">Peso individual de cada pieza en kilogramos</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="unitsPerReference">
+                                    <i class="fas fa-calculator"></i> Unidades de Referencia
+                                </label>
+                                <input type="number" id="unitsPerReference" name="units_per_weight_reference" min="1" value="10">
+                                <small style="color: #bdc3c7;">Cada cuántas unidades se pesará para cálculos</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="initialStock">
+                                <i class="fas fa-cubes"></i> Stock Inicial
+                            </label>
+                            <input type="number" id="initialStock" name="stock" min="0" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="minStock">
+                                <i class="fas fa-exclamation-circle"></i> Stock Mínimo
+                            </label>
+                            <input type="number" id="minStock" name="min_stock" min="1" value="5">
+                        </div>
+                    </div>
+
+                    <!-- Calculadora de peso -->
+                    <div id="weightCalculator" class="weight-calculator hidden">
+                        <h4><i class="fas fa-calculator"></i> Calculadora de Stock por Peso</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="totalWeight">
+                                    <i class="fas fa-weight"></i> Peso Total (kg)
+                                </label>
+                                <input type="number" id="totalWeight" step="0.1" min="0.1" placeholder="5.5">
+                            </div>
+                            <div class="form-group">
+                                <button type="button" id="calculateStock" class="calculate-btn">
+                                    <i class="fas fa-calculator"></i> Calcular Unidades
+                                </button>
+                            </div>
+                        </div>
+                        <div id="calculationResult" class="calculation-result hidden"></div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-save"></i> Agregar Producto
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modales -->
+    
+    <!-- Modal para movimientos de stock -->
+    <div id="stockModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Movimiento de Stock</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="stockMovementForm">
+                    <input type="hidden" id="modalProductId">
+                    <input type="hidden" id="modalMovementType">
+
+                    <div class="form-group">
+                        <label>Producto:</label>
+                        <p id="modalProductName" class="product-info"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="movementQuantity">
+                            <i class="fas fa-hashtag"></i> Cantidad
+                        </label>
+                        <input type="number" id="movementQuantity" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="movementReason">
+                            <i class="fas fa-comment"></i> Motivo
+                        </label>
+                        <input type="text" id="movementReason" placeholder="Descripción del movimiento">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn">Cancelar</button>
+                        <button type="submit" class="confirm-btn">Confirmar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de productos con stock bajo -->
+    <div id="lowStockModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚠️ Productos con Stock Bajo</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="lowStockList" class="low-stock-list">
+                    <!-- Lista se cargará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes de notificación -->
+    <div id="notification" class="notification hidden">
+        <div class="notification-content">
+            <span id="notificationMessage"></span>
+            <button class="notification-close">&times;</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/dashboard.js"></script>
+    <script src="js/inventory.js"></script>
+    <script src="js/reports.js"></script>
+</body>
+</html>

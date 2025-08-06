@@ -1,0 +1,70 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables y configuración sensible
+.env
+.env.local
+.env.production
+.env.development.local
+.env.test.local
+config/secret.json
+config/keys.json
+config/credentials.json
+
+# Database - CRÍTICO: No subir bases de datos
+config/bodega.db
+config/bodega.db-*
+*.db
+*.sqlite
+*.sqlite3
+backups/
+
+# Reports
+reports/*.pdf
+reports/backup*
+
+# Logs - Pueden contener información sensible
+*.log
+logs/
+
+# Archivos de usuario y sesiones
+sessions/
+uploads/
+temp/
+tmp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build output
+dist/
+build/
+out/
+
+# Certificados y claves (CRÍTICO)
+certificates/
+keys/
+secrets/
+*.pem
+*.key
+*.cert
+*.crt
+
+# Archivos de respaldo que pueden contener info sensible
+*.backup
+*.bak
+*.old
