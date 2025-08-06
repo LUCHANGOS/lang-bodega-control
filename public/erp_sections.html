@@ -1,0 +1,1209 @@
+<!-- SECCIONES ADICIONALES DEL ERP -->
+<!-- Estas secciones se agregan al archivo erp_dashboard.html -->
+
+        <!-- Movements Section -->
+        <section id="movements-section" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-exchange-alt"></i> Gestión de Movimientos</h2>
+                <div class="header-actions">
+                    <div class="date-filter">
+                        <input type="date" id="movementDateFrom" class="date-input">
+                        <span>hasta</span>
+                        <input type="date" id="movementDateTo" class="date-input">
+                    </div>
+                    <button class="primary-btn" id="addMovementBtn">
+                        <i class="fas fa-plus"></i> Nuevo Movimiento
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Movement Stats -->
+            <div class="movement-stats">
+                <div class="stat-card entries">
+                    <div class="stat-icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="stat-data">
+                        <h3 id="totalEntries">0</h3>
+                        <p>Entradas</p>
+                    </div>
+                </div>
+                <div class="stat-card exits">
+                    <div class="stat-icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="stat-data">
+                        <h3 id="totalExits">0</h3>
+                        <p>Salidas</p>
+                    </div>
+                </div>
+                <div class="stat-card transfers">
+                    <div class="stat-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="stat-data">
+                        <h3 id="totalTransfers">0</h3>
+                        <p>Transferencias</p>
+                    </div>
+                </div>
+                <div class="stat-card adjustments">
+                    <div class="stat-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div class="stat-data">
+                        <h3 id="totalAdjustments">0</h3>
+                        <p>Ajustes</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Movement Filters -->
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label>Tipo:</label>
+                    <select id="movementTypeFilter">
+                        <option value="">Todos los tipos</option>
+                        <option value="entrada">Entradas</option>
+                        <option value="salida">Salidas</option>
+                        <option value="transferencia">Transferencias</option>
+                        <option value="ajuste">Ajustes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Proyecto:</label>
+                    <select id="movementProjectFilter">
+                        <option value="">Todos los proyectos</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Usuario:</label>
+                    <select id="movementUserFilter">
+                        <option value="">Todos los usuarios</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Estado:</label>
+                    <select id="movementStatusFilter">
+                        <option value="">Todos</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="aprobado">Aprobado</option>
+                        <option value="completado">Completado</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Movements Table -->
+            <div class="table-container">
+                <table class="data-table" id="movementsTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Proyecto</th>
+                            <th>Usuario</th>
+                            <th>Estado</th>
+                            <th>Motivo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movementsTableBody">
+                        <!-- Se carga dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Vouchers Section -->
+        <section id="vouchers-section" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-file-invoice"></i> Vales de Retiro</h2>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="voucherSearch" placeholder="Buscar vale por número, proyecto o responsable...">
+                    </div>
+                    <button class="primary-btn" id="createVoucherBtn">
+                        <i class="fas fa-plus"></i> Crear Vale
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Voucher Stats -->
+            <div class="voucher-stats">
+                <div class="stat-card pending-vouchers">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-data">
+                        <h3 id="pendingVouchers">0</h3>
+                        <p>Pendientes</p>
+                    </div>
+                </div>
+                <div class="stat-card approved-vouchers">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-data">
+                        <h3 id="approvedVouchers">0</h3>
+                        <p>Aprobados</p>
+                    </div>
+                </div>
+                <div class="stat-card delivered-vouchers">
+                    <div class="stat-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="stat-data">
+                        <h3 id="deliveredVouchers">0</h3>
+                        <p>Entregados</p>
+                    </div>
+                </div>
+                <div class="stat-card month-value">
+                    <div class="stat-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="stat-data">
+                        <h3 id="monthVoucherValue">$0</h3>
+                        <p>Valor Mes</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vouchers Grid -->
+            <div class="vouchers-grid" id="vouchersGrid">
+                <!-- Se carga dinámicamente -->
+            </div>
+            
+            <!-- Voucher Template for PDF Generation -->
+            <div id="voucher-template" style="display: none;">
+                <div class="voucher-document">
+                    <div class="voucher-header">
+                        <div class="company-logo">
+                            <h2>L.A.N.G. INDUSTRIAL</h2>
+                            <p>Sistema de Control de Bodega</p>
+                        </div>
+                        <div class="voucher-info">
+                            <h3>VALE DE RETIRO</h3>
+                            <p><strong>N°:</strong> <span id="voucherNumber"></span></p>
+                            <p><strong>Fecha:</strong> <span id="voucherDate"></span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="voucher-details">
+                        <div class="detail-row">
+                            <span><strong>Proyecto:</strong></span>
+                            <span id="voucherProject"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>CECO:</strong></span>
+                            <span id="voucherCECO"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Responsable:</strong></span>
+                            <span id="voucherResponsible"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Autorizado por:</strong></span>
+                            <span id="voucherAuthorizer"></span>
+                        </div>
+                    </div>
+                    
+                    <table class="voucher-items">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descripción</th>
+                                <th>Cantidad</th>
+                                <th>Unidad</th>
+                                <th>Ubicación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="voucherItemsBody">
+                            <!-- Items del vale -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="voucher-signatures">
+                        <div class="signature-block">
+                            <p>_________________________</p>
+                            <p><strong>Bodeguero</strong></p>
+                            <p>Entregó</p>
+                        </div>
+                        <div class="signature-block">
+                            <p>_________________________</p>
+                            <p><strong>Responsable</strong></p>
+                            <p>Recibió</p>
+                        </div>
+                        <div class="signature-block">
+                            <p>_________________________</p>
+                            <p><strong>Supervisor</strong></p>
+                            <p>Autorizó</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Reports Section -->
+        <section id="reports-section" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-bar"></i> Reportes y Análisis</h2>
+                <div class="header-actions">
+                    <div class="date-range-picker">
+                        <input type="date" id="reportDateFrom" class="date-input">
+                        <span>hasta</span>
+                        <input type="date" id="reportDateTo" class="date-input">
+                    </div>
+                    <button class="secondary-btn" id="exportReportBtn">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Report Type Selector -->
+            <div class="report-selector">
+                <div class="report-tabs">
+                    <button class="report-tab active" data-report="inventory">
+                        <i class="fas fa-boxes"></i> Inventario
+                    </button>
+                    <button class="report-tab" data-report="movements">
+                        <i class="fas fa-exchange-alt"></i> Movimientos
+                    </button>
+                    <button class="report-tab" data-report="projects">
+                        <i class="fas fa-project-diagram"></i> Proyectos
+                    </button>
+                    <button class="report-tab" data-report="consumption">
+                        <i class="fas fa-chart-line"></i> Consumos
+                    </button>
+                    <button class="report-tab" data-report="efficiency">
+                        <i class="fas fa-tachometer-alt"></i> Eficiencia
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Report Content -->
+            <div class="report-content">
+                
+                <!-- Inventory Report -->
+                <div id="inventory-report" class="report-panel active">
+                    <div class="report-summary">
+                        <div class="summary-card">
+                            <h4>Valor Total Inventario</h4>
+                            <h2 id="totalInventoryValue">$0</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Productos Activos</h4>
+                            <h2 id="activeProductsCount">0</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Categorías</h4>
+                            <h2 id="categoriesCount">0</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Rotación Promedio</h4>
+                            <h2 id="averageRotation">0%</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="report-charts">
+                        <div class="chart-container">
+                            <h4>Stock por Categoría</h4>
+                            <canvas id="stockByCategoryChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Productos con Stock Crítico</h4>
+                            <canvas id="criticalStockChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="report-table">
+                        <h4>Detalle de Inventario</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Stock Actual</th>
+                                    <th>Stock Mínimo</th>
+                                    <th>Valor Unitario</th>
+                                    <th>Valor Total</th>
+                                    <th>Ubicación</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryReportTable">
+                                <!-- Se llena dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Movements Report -->
+                <div id="movements-report" class="report-panel">
+                    <div class="report-summary">
+                        <div class="summary-card">
+                            <h4>Total Entradas</h4>
+                            <h2 id="totalEntriesReport">0</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Total Salidas</h4>
+                            <h2 id="totalExitsReport">0</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Movimientos del Mes</h4>
+                            <h2 id="monthlyMovementsReport">0</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Productos Más Movidos</h4>
+                            <h2 id="topMovedProduct">-</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="report-charts">
+                        <div class="chart-container">
+                            <h4>Movimientos por Mes</h4>
+                            <canvas id="movementsByMonthChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Entradas vs Salidas</h4>
+                            <canvas id="entriesVsExitsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Projects Report -->
+                <div id="projects-report" class="report-panel">
+                    <div class="report-summary">
+                        <div class="summary-card">
+                            <h4>Proyectos Activos</h4>
+                            <h2 id="activeProjectsReport">0</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Consumo Total</h4>
+                            <h2 id="totalConsumptionReport">$0</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Proyecto Más Activo</h4>
+                            <h2 id="mostActiveProject">-</h2>
+                        </div>
+                        <div class="summary-card">
+                            <h4>Eficiencia Promedio</h4>
+                            <h2 id="averageEfficiency">0%</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="report-charts">
+                        <div class="chart-container">
+                            <h4>Consumo por Proyecto</h4>
+                            <canvas id="consumptionByProjectChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Estado de Proyectos</h4>
+                            <canvas id="projectStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        
+        <!-- Kardex Section -->
+        <section id="kardex-section" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-history"></i> Kardex de Productos</h2>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="kardexSearch" class="barcode-input" 
+                               placeholder="Buscar producto por código o nombre...">
+                    </div>
+                    <button class="secondary-btn" id="exportKardexBtn">
+                        <i class="fas fa-file-excel"></i> Exportar Excel
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Product Selector -->
+            <div class="product-selector">
+                <div class="selector-card" id="selectedProductCard">
+                    <div class="product-info">
+                        <h4 id="kardexProductName">Selecciona un producto</h4>
+                        <p id="kardexProductCode">-</p>
+                        <p id="kardexProductCategory">-</p>
+                    </div>
+                    <div class="product-stock">
+                        <h3 id="kardexCurrentStock">0</h3>
+                        <p>Stock Actual</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kardex Summary -->
+            <div class="kardex-summary">
+                <div class="summary-item">
+                    <div class="summary-label">Entradas Totales</div>
+                    <div class="summary-value" id="kardexTotalEntries">0</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Salidas Totales</div>
+                    <div class="summary-value" id="kardexTotalExits">0</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Rotación</div>
+                    <div class="summary-value" id="kardexRotation">0x</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Días Sin Movimiento</div>
+                    <div class="summary-value" id="kardexDaysWithoutMovement">0</div>
+                </div>
+            </div>
+            
+            <!-- Kardex Chart -->
+            <div class="kardex-chart-container">
+                <div class="chart-header">
+                    <h4>Evolución del Stock</h4>
+                    <select id="kardexPeriod">
+                        <option value="week">Última Semana</option>
+                        <option value="month" selected>Último Mes</option>
+                        <option value="quarter">Último Trimestre</option>
+                        <option value="year">Último Año</option>
+                    </select>
+                </div>
+                <canvas id="kardexChart"></canvas>
+            </div>
+            
+            <!-- Kardex Table -->
+            <div class="table-container">
+                <table class="data-table" id="kardexTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Documento</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Saldo</th>
+                            <th>Usuario</th>
+                            <th>Proyecto</th>
+                            <th>Motivo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kardexTableBody">
+                        <!-- Se carga dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+<!-- MODALS ADICIONALES -->
+
+<!-- Add Movement Modal -->
+<div id="addMovementModal" class="modal">
+    <div class="modal-content large-modal">
+        <div class="modal-header">
+            <h3>Nuevo Movimiento de Material</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addMovementForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo de Movimiento:</label>
+                        <select id="movementType" required>
+                            <option value="">Seleccionar tipo...</option>
+                            <option value="entrada">Entrada</option>
+                            <option value="salida">Salida</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="ajuste">Ajuste de Inventario</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha:</label>
+                        <input type="datetime-local" id="movementDateTime" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Producto:</label>
+                    <div class="product-input">
+                        <input type="text" id="movementProductCode" class="barcode-input" 
+                               placeholder="Código del producto o escanear código de barras">
+                        <button type="button" class="search-product-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="selected-product" id="selectedProduct">
+                        <!-- Se muestra aquí el producto seleccionado -->
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cantidad:</label>
+                        <input type="number" id="movementQuantity" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Unidad:</label>
+                        <input type="text" id="movementUnit" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="projectGroup">
+                    <label>Proyecto (para salidas):</label>
+                    <select id="movementProject">
+                        <option value="">Seleccionar proyecto...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="locationGroup">
+                    <label>Ubicación:</label>
+                    <select id="movementLocation">
+                        <option value="">Seleccionar ubicación...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Motivo/Observaciones:</label>
+                    <textarea id="movementReason" placeholder="Descripción del motivo del movimiento"></textarea>
+                </div>
+                
+                <div class="form-group" id="authorizationGroup">
+                    <label>Autorizado por:</label>
+                    <input type="text" id="movementAuthorizer" placeholder="Nombre del supervisor que autoriza">
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="secondary-btn" onclick="closeModal('addMovementModal')">Cancelar</button>
+            <button type="submit" form="addMovementForm" class="primary-btn">Registrar Movimiento</button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Voucher Modal -->
+<div id="createVoucherModal" class="modal">
+    <div class="modal-content large-modal">
+        <div class="modal-header">
+            <h3>Crear Vale de Retiro</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="createVoucherForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Número de Vale:</label>
+                        <input type="text" id="voucherNum" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha:</label>
+                        <input type="date" id="voucherDate" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Proyecto:</label>
+                        <select id="voucherProjectSelect" required>
+                            <option value="">Seleccionar proyecto...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>CECO:</label>
+                        <input type="text" id="voucherCECOInput" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Responsable:</label>
+                        <input type="text" id="voucherResponsibleInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Autorizado por:</label>
+                        <input type="text" id="voucherAuthorizerInput" required>
+                    </div>
+                </div>
+                
+                <!-- Items del Vale -->
+                <div class="voucher-items-section">
+                    <div class="items-header">
+                        <h4>Materiales a Retirar</h4>
+                        <button type="button" class="add-item-btn" id="addVoucherItem">
+                            <i class="fas fa-plus"></i> Agregar Material
+                        </button>
+                    </div>
+                    <div class="voucher-items-list" id="voucherItemsList">
+                        <!-- Items se agregan dinámicamente -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Observaciones:</label>
+                    <textarea id="voucherObservations" placeholder="Observaciones adicionales del vale"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="secondary-btn" onclick="closeModal('createVoucherModal')">Cancelar</button>
+            <button type="button" class="secondary-btn" id="previewVoucherBtn">Vista Previa</button>
+            <button type="submit" form="createVoucherForm" class="primary-btn">Crear Vale</button>
+        </div>
+    </div>
+</div>
+
+<!-- Product Search Modal -->
+<div id="productSearchModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Buscar Producto</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="productSearchInput" class="barcode-input" 
+                       placeholder="Buscar por código, nombre o escanear código de barras">
+            </div>
+            <div class="products-list" id="productSearchResults">
+                <!-- Resultados de búsqueda -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ESTILOS ADICIONALES PARA LAS NUEVAS SECCIONES */
+
+.movement-stats, .voucher-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.entries .stat-icon {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+
+.exits .stat-icon {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.transfers .stat-icon {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.adjustments .stat-icon {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.pending-vouchers .stat-icon {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.approved-vouchers .stat-icon {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+
+.delivered-vouchers .stat-icon {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.month-value .stat-icon {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.vouchers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.voucher-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.voucher-card:hover {
+    transform: translateY(-2px);
+}
+
+.voucher-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.voucher-number {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.voucher-date {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.voucher-details {
+    margin: 1rem 0;
+}
+
+.voucher-details p {
+    margin: 0.5rem 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.voucher-items-summary {
+    background: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.voucher-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.report-selector {
+    margin-bottom: 2rem;
+}
+
+.report-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.report-tab {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.report-tab:hover {
+    background: #f8f9fa;
+    color: #2c3e50;
+}
+
+.report-tab.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+    background: #f8f9fa;
+}
+
+.report-panel {
+    display: none;
+}
+
+.report-panel.active {
+    display: block;
+}
+
+.report-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.summary-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.summary-card h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.8rem;
+}
+
+.report-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.report-table {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.product-selector {
+    margin-bottom: 2rem;
+}
+
+.selector-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.product-info p {
+    margin: 0.25rem 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.product-stock {
+    text-align: center;
+}
+
+.product-stock h3 {
+    margin: 0;
+    font-size: 2rem;
+    color: #3498db;
+}
+
+.product-stock p {
+    margin: 0.25rem 0 0 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.kardex-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.summary-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.summary-value {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.kardex-chart-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.large-modal .modal-content {
+    width: 95%;
+    max-width: 800px;
+}
+
+.product-input {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.product-input input {
+    flex: 1;
+}
+
+.search-product-btn {
+    padding: 0.75rem;
+    background: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.selected-product {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: none;
+}
+
+.selected-product.active {
+    display: block;
+}
+
+.voucher-items-section {
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.add-item-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.voucher-item {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.voucher-item:last-child {
+    border-bottom: none;
+}
+
+.voucher-item input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.remove-item-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.products-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.product-result {
+    padding: 1rem;
+    border-bottom: 1px solid #ecf0f1;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.product-result:hover {
+    background: #f8f9fa;
+}
+
+.product-result h5 {
+    margin: 0 0 0.25rem 0;
+    color: #2c3e50;
+}
+
+.product-result p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.date-filter, .date-range-picker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.date-input {
+    padding: 0.5rem;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.voucher-document {
+    background: white;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+}
+
+.voucher-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.company-logo h2 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.company-logo p {
+    margin: 0.25rem 0 0 0;
+    color: #7f8c8d;
+}
+
+.voucher-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.voucher-info p {
+    margin: 0.25rem 0;
+    color: #2c3e50;
+}
+
+.voucher-details {
+    margin: 1.5rem 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.voucher-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+
+.voucher-items th,
+.voucher-items td {
+    padding: 0.75rem;
+    border: 1px solid #bdc3c7;
+    text-align: left;
+}
+
+.voucher-items th {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+
+.voucher-signatures {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 3rem;
+}
+
+.signature-block {
+    text-align: center;
+}
+
+.signature-block p {
+    margin: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+    .movement-stats, .voucher-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .report-charts {
+        grid-template-columns: 1fr;
+    }
+    
+    .kardex-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .vouchers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .voucher-signatures {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}
+
+@media print {
+    .modal, .erp-header, .erp-sidebar, .modal-header, .modal-actions {
+        display: none !important;
+    }
+    
+    .voucher-document {
+        padding: 0;
+    }
+}
+</style>
