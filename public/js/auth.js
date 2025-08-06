@@ -60,9 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = loginForm.password.value;
 
         // Simular delay de servidor
-        messageDiv.classList.remove('hidden', 'success', 'error');
+        messageDiv.classList.remove('hidden', 'success', 'error', 'info');
         messageDiv.textContent = 'Verificando credenciales...';
         messageDiv.classList.add('info');
+        messageDiv.style.display = 'block';
         
         await new Promise(resolve => setTimeout(resolve, 800));
         
