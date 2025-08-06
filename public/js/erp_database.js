@@ -2,7 +2,13 @@
 class ERPDatabase {
     constructor() {
         this.version = '2.0.0';
-        this.initializeDatabase();
+    }
+    
+    static async init() {
+        console.log('🔧 Inicializando ERP Database...');
+        const instance = new ERPDatabase();
+        await instance.initializeDatabase();
+        return instance;
     }
 
     initializeDatabase() {

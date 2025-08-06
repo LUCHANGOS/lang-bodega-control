@@ -99,15 +99,19 @@ class ERPDashboard {
 
     async loadData() {
         try {
-            this.data.products = await ERPDatabase.getProducts();
-            this.data.projects = await ERPDatabase.getProjects();
-            this.data.movements = await ERPDatabase.getMovements();
-            this.data.recipes = await ERPDatabase.getRecipes();
-            this.data.vouchers = await ERPDatabase.getVouchers();
-            
-            console.log('Datos cargados:', this.data);
+            if (typeof window.erpDB !== 'undefined') {
+                this.data.products = window.erpDB.getProducts();
+                this.data.projects = window.erpDB.getProjects();
+                this.data.movements = window.erpDB.getMovements();
+                this.data.recipes = window.erpDB.getRecipes();
+                this.data.vouchers = window.erpDB.getWithdrawalVouchers();
+                
+                console.log('✅ Datos cargados:', this.data);
+            } else {
+                console.warn('⚠️ ERP Database no inicializada');
+            }
         } catch (error) {
-            console.error('Error cargando datos:', error);
+            console.error('❌ Error cargando datos:', error);
         }
     }
 
@@ -190,11 +194,11 @@ class ERPDashboard {
 
     updateKPIs() {
         const totalProducts = this.data.products.length;
-        const lowStockItems = this.data.products.filter(p => p.stock <= (p.stockMinimo || 10)).length;
-        const activeProjects = this.data.projects.filter(p => p.estado === 'activo').length;
+        const lowStockItems = this.data.products.filter(p => (p.currentStock || 0) <= (p.minStock || 10)).length;
+        const activeProjects = this.data.projects.filter(p => p.status === 'Activo').length;
         const currentMonth = new Date().getMonth();
         const monthlyMovements = this.data.movements.filter(m => {
-            const movDate = new Date(m.fecha);
+            const movDate = new Date(m.date);
             return movDate.getMonth() === currentMonth;
         }).length;
 
@@ -204,7 +208,7 @@ class ERPDashboard {
         this.updateElement('activeProjects', activeProjects);
         this.updateElement('monthlyMovements', monthlyMovements);
         
-        console.log('KPIs actualizados:', { totalProducts, lowStockItems, activeProjects, monthlyMovements });
+        console.log('✅ KPIs actualizados:', { totalProducts, lowStockItems, activeProjects, monthlyMovements });
     }
 
     updateElement(id, value) {
