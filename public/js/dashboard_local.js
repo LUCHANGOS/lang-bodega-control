@@ -132,27 +132,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const filterProductsByCategory = async (categoryId) => {
-        const response = await fetch(`/api/inventory/products/${categoryId}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        });
-        const products = await response.json();
+    const filterProductsByCategory = (category) => {
+        const products = localDB.getProductsByCategory(category);
 
         productsTableBody.innerHTML = '';
         products.forEach(product => {
             const row = document.createElement('tr');
-            const stockClass = product.stock <= product.min_stock ? 'low-stock' : '';
+            const stockClass = product.quantity <= product.minStock ? 'low-stock' : '';
+            const productNameEscaped = product.name.replace(/'/g, "&apos;");
 
             row.innerHTML = `
-                <td>${product.code}</td>
+                <td>LANG-${product.id.toString().padStart(4, '0')}</td>
                 <td>${product.name}</td>
-                <td>${product.category_name}</td>
-                <td>${product.stock}</td>
-                <td><span class="${stockClass}">${product.stock <= product.min_stock ? 'Bajo' : 'Ok'}</span></td>
+                <td>${product.category}</td>
+                <td>${product.quantity}</td>
+                <td><span class="${stockClass}">${product.quantity <= product.minStock ? 'Bajo' : 'Ok'}</span></td>
                 <td>
-                    <button class="action-btn" onclick="openMovementModal(${product.id}, 'entrada', '${product.name}')">Agregar Stock</button>
-                    <button class="action-btn" onclick="openMovementModal(${product.id}, 'salida', '${product.name}')">Retirar Stock</button>
-                    <button class="action-btn" style="background-color: #e74c3c;" onclick="deleteProduct(${product.id}, '${product.name}')">Eliminar</button>
+                    <button class="action-btn" onclick="openMovementModal(${product.id}, 'entrada', '${productNameEscaped}')">Agregar Stock</button>
+                    <button class="action-btn" onclick="openMovementModal(${product.id}, 'salida', '${productNameEscaped}')">Retirar Stock</button>
+                    <button class="action-btn" style="background-color: #e74c3c;" onclick="deleteProduct(${product.id}, '${productNameEscaped}')">Eliminar</button>
                 </td>
             `;
 
@@ -160,11 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const loadLowStock = async () => {
-        const response = await fetch('/api/inventory/low-stock', {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        });
-        const products = await response.json();
+    const loadLowStock = () => {
+        const products = localDB.getLowStockProducts();
 
         if (products.length > 0) {
             lowStockAlert.classList.remove('hidden');
@@ -173,8 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
             products.forEach(product => {
                 const div = document.createElement('div');
                 div.innerHTML = `
-                    <strong>${product.code} - ${product.name}</strong>
-                    <p>Stock Actual: ${product.stock} | Stock Mínimo: ${product.min_stock}</p>
+                    <strong>LANG-${product.id.toString().padStart(4, '0')} - ${product.name}</strong>
+                    <p>Stock Actual: ${product.quantity} | Stock Mínimo: ${product.minStock}</p>
                 `;
                 lowStockList.appendChild(div);
             });
@@ -183,9 +178,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    viewLowStock.addEventListener('click', () => {
-        lowStockModal.style.display = 'block';
-    });
+    // Event Listeners
+    if (viewLowStock) {
+        viewLowStock.addEventListener('click', () => {
+            lowStockModal.style.display = 'block';
+        });
+    }
 
     document.querySelectorAll('.modal-close').forEach(button => {
         button.addEventListener('click', () => {
@@ -193,79 +191,107 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    if (searchInput) {
+        searchInput.addEventListener('input', loadProducts);
+    }
+
     const openMovementModal = (productId, type, productName) => {
         stockModal.style.display = 'block';
         document.getElementById('modalProductId').value = productId;
         document.getElementById('modalMovementType').value = type;
         document.getElementById('modalProductName').textContent = productName;
         document.getElementById('modalTitle').textContent = type === 'entrada' ? 'Agregar Stock' : 'Retirar Stock';
+        document.getElementById('movementQuantity').value = '';
+        document.getElementById('movementReason').value = '';
     };
 
-    stockMovementForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
+    if (stockMovementForm) {
+        stockMovementForm.addEventListener('submit', (event) => {
+            event.preventDefault();
 
-        const productId = document.getElementById('modalProductId').value;
-        const type = document.getElementById('modalMovementType').value;
-        const quantity = parseInt(document.getElementById('movementQuantity').value);
-        const reason = document.getElementById('movementReason').value;
+            const productId = parseInt(document.getElementById('modalProductId').value);
+            const type = document.getElementById('modalMovementType').value;
+            const quantity = parseInt(document.getElementById('movementQuantity').value);
+            const reason = document.getElementById('movementReason').value;
 
-        const response = await fetch('/api/inventory/movement', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify({ product_id: productId, type, quantity, reason })
+            if (!quantity || quantity <= 0) {
+                alert('Por favor ingresa una cantidad válida');
+                return;
+            }
+
+            try {
+                const product = localDB.getProduct(productId);
+                if (!product) {
+                    alert('Producto no encontrado');
+                    return;
+                }
+
+                if (type === 'salida' && product.quantity < quantity) {
+                    alert(`Stock insuficiente. Stock actual: ${product.quantity}`);
+                    return;
+                }
+
+                // Actualizar cantidad
+                const newQuantity = type === 'entrada' 
+                    ? product.quantity + quantity 
+                    : product.quantity - quantity;
+
+                localDB.updateProduct(productId, { quantity: newQuantity });
+
+                // Registrar movimiento
+                localDB.addMovement({
+                    productId: productId,
+                    productName: product.name,
+                    type: type,
+                    quantity: quantity,
+                    reason: reason || `${type === 'entrada' ? 'Entrada' : 'Salida'} de stock`,
+                    user: localStorage.getItem('username') || 'Usuario'
+                });
+
+                alert(`${type.charAt(0).toUpperCase() + type.slice(1)} registrada exitosamente`);
+                loadProducts();
+                loadLowStock();
+                stockModal.style.display = 'none';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al registrar el movimiento');
+            }
         });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} registrada exitosamente`);
-            loadProducts();
-            loadLowStock();
-            stockModal.style.display = 'none';
-        } else {
-            alert(result.error || 'Error al registrar el movimiento');
-        }
-    });
+    }
 
     // Cargar movimientos
-    const loadMovements = async (date = null) => {
-        try {
-            let url = '/api/inventory/movements';
-            if (date) {
-                url += `?date=${date}`;
-            }
-
-            const response = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    const loadMovements = (date = null) => {
+        let movements = localDB.getMovements();
+        
+        // Filtrar por fecha si se especifica
+        if (date) {
+            const filterDate = new Date(date).toDateString();
+            movements = movements.filter(movement => {
+                const movementDate = new Date(movement.date).toDateString();
+                return movementDate === filterDate;
             });
-            const movements = await response.json();
+        }
 
-            const movementsTableBody = document.getElementById('movementsTableBody');
-            if (movementsTableBody) {
-                movementsTableBody.innerHTML = '';
-                movements.forEach(movement => {
-                    const row = document.createElement('tr');
-                    const date = new Date(movement.date);
-                    const typeClass = movement.type === 'entrada' ? 'text-success' : 'text-danger';
-                    const typeIcon = movement.type === 'entrada' ? '+' : '-';
+        const movementsTableBody = document.getElementById('movementsTableBody');
+        if (movementsTableBody) {
+            movementsTableBody.innerHTML = '';
+            movements.forEach(movement => {
+                const row = document.createElement('tr');
+                const date = new Date(movement.date);
+                const typeClass = movement.type === 'entrada' ? 'text-success' : 'text-danger';
+                const typeIcon = movement.type === 'entrada' ? '+' : '-';
 
-                    row.innerHTML = `
-                        <td>${date.toLocaleDateString('es-ES')} ${date.toLocaleTimeString('es-ES')}</td>
-                        <td>${movement.product_code} - ${movement.product_name}</td>
-                        <td><span class="${typeClass}">${typeIcon}${movement.type.toUpperCase()}</span></td>
-                        <td>${movement.quantity}</td>
-                        <td>${movement.responsible}</td>
-                        <td>${movement.reason || '-'}</td>
-                    `;
+                row.innerHTML = `
+                    <td>${date.toLocaleDateString('es-ES')} ${date.toLocaleTimeString('es-ES')}</td>
+                    <td>LANG-${movement.productId.toString().padStart(4, '0')} - ${movement.productName}</td>
+                    <td><span class="${typeClass}">${typeIcon}${movement.type.toUpperCase()}</span></td>
+                    <td>${movement.quantity}</td>
+                    <td>${movement.user}</td>
+                    <td>${movement.reason || '-'}</td>
+                `;
 
-                    movementsTableBody.appendChild(row);
-                });
-            }
-        } catch (error) {
-            console.error('Error cargando movimientos:', error);
+                movementsTableBody.appendChild(row);
+            });
         }
     };
 
@@ -284,38 +310,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Función para eliminar producto
-    const deleteProduct = async (productId, productName) => {
+    const deleteProduct = (productId, productName) => {
         if (confirm(`¿Estás seguro de eliminar el producto "${productName}"?\n\nEsta acción no se puede deshacer.`)) {
             try {
-                const response = await fetch(`/api/inventory/products/${productId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
+                const success = localDB.deleteProduct(productId);
+                if (success) {
                     alert('Producto eliminado exitosamente');
                     loadProducts();
                     loadLowStock();
                 } else {
-                    alert(result.error || 'Error al eliminar el producto');
+                    alert('Error al eliminar el producto');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error de conexión al eliminar el producto');
+                alert('Error al eliminar el producto');
             }
         }
     };
+
+    // Función para cargar reportes
+    const loadReports = () => {
+        const stats = localDB.getInventoryStats();
+        const reportsSection = document.getElementById('reports-section');
+        
+        if (reportsSection) {
+            const statsContainer = reportsSection.querySelector('.stats-container') || document.createElement('div');
+            statsContainer.className = 'stats-container';
+            
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <h3>Total de Productos</h3>
+                    <p class="stat-number">${stats.totalProducts}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Valor Total del Inventario</h3>
+                    <p class="stat-number">$${stats.totalValue.toFixed(2)}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Productos con Stock Bajo</h3>
+                    <p class="stat-number">${stats.lowStockItems}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Cantidad Total en Stock</h3>
+                    <p class="stat-number">${stats.totalQuantity}</p>
+                </div>
+            `;
+            
+            if (!reportsSection.querySelector('.stats-container')) {
+                reportsSection.appendChild(statsContainer);
+            }
+        }
+    };
+
+    // Función para cerrar sesión
+    const logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userInfo');
+        localStorage.removeItem('loginTime');
+        window.location.href = 'index.html';
+    };
+
+    // Agregar evento al botón de cerrar sesión si existe
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 
     // Exponer funciones globalmente
     window.openMovementModal = openMovementModal;
     window.loadProducts = loadProducts;
     window.loadMovements = loadMovements;
     window.deleteProduct = deleteProduct;
+    window.logout = logout;
 
+    // Inicializar aplicación
     loadCategories();
     loadProducts();
     loadLowStock();
