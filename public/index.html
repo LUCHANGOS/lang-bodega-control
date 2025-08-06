@@ -10,6 +10,39 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" rel="stylesheet">
 </head>
 <body class="erp-dashboard">
+    <!-- Script de verificación de autenticación (debe ejecutarse inmediatamente) -->
+    <script>
+        // Verificar autenticación inmediatamente al cargar la página
+        (function checkAuth() {
+            const sessionData = localStorage.getItem('currentSession');
+            if (!sessionData) {
+                console.log('⚠️ No hay sesión activa, redirigiendo al login...');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const session = JSON.parse(sessionData);
+                const now = new Date();
+                const sessionTime = new Date(session.timestamp);
+                const hoursDiff = (now - sessionTime) / (1000 * 60 * 60);
+                
+                // Verificar si la sesión ha expirado (más de 24 horas)
+                if (hoursDiff > 24) {
+                    console.log('⚠️ Sesión expirada, redirigiendo al login...');
+                    localStorage.removeItem('currentSession');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                console.log('✅ Sesión válida encontrada para:', session.user.nombre);
+            } catch (error) {
+                console.log('⚠️ Error al verificar sesión, redirigiendo al login...');
+                localStorage.removeItem('currentSession');
+                window.location.href = 'login.html';
+            }
+        })();
+    </script>
     <!-- Header ERP -->
     <header class="erp-header">
         <div class="header-content">

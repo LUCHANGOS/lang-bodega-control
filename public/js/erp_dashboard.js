@@ -534,6 +534,12 @@ class ERPDashboard {
                 filter.addEventListener('change', () => this.applyInventoryFilters());
             }
         });
+        
+        // Botón agregar producto
+        const addProductBtn = document.getElementById('addProductBtn');
+        if (addProductBtn) {
+            addProductBtn.addEventListener('click', () => this.addProduct());
+        }
     }
 
     setupBarcodeHandling() {
