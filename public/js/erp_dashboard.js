@@ -100,19 +100,32 @@ class ERPDashboard {
 
     async loadData() {
         try {
-            if (typeof window.erpDB !== 'undefined') {
-                this.data.products = window.erpDB.getProducts();
-                this.data.projects = window.erpDB.getProjects();
-                this.data.movements = window.erpDB.getMovements();
-                this.data.recipes = window.erpDB.getRecipes();
-                this.data.vouchers = window.erpDB.getWithdrawalVouchers();
-                
-                console.log('✅ Datos cargados:', this.data);
-            } else {
-                console.warn('⚠️ ERP Database no inicializada');
-            }
+            // Cargar datos directamente desde localStorage
+            const products = JSON.parse(localStorage.getItem('erp_products') || '[]');
+            const projects = JSON.parse(localStorage.getItem('erp_projects') || '[]');
+            const movements = JSON.parse(localStorage.getItem('erp_movements') || '[]');
+            const recipes = JSON.parse(localStorage.getItem('erp_recipes') || '[]');
+            const vouchers = JSON.parse(localStorage.getItem('erp_withdrawal_vouchers') || '[]');
+            
+            this.data = {
+                products: products,
+                projects: projects,
+                movements: movements,
+                recipes: recipes,
+                vouchers: vouchers
+            };
+            
+            console.log('✅ Datos cargados:', this.data);
         } catch (error) {
             console.error('❌ Error cargando datos:', error);
+            // Inicializar con datos vacíos en caso de error
+            this.data = {
+                products: [],
+                projects: [],
+                movements: [],
+                recipes: [],
+                vouchers: []
+            };
         }
     }
 
@@ -385,13 +398,13 @@ class ERPDashboard {
 
             return `
                 <tr>
-                    <td>${product.codigo || product.id}</td>
-                    <td>${product.codigoBarras || '-'}</td>
-                    <td>${product.nombre}</td>
-                    <td>${product.categoria}</td>
-                    <td>${product.stock || 0}</td>
-                    <td>${product.unidad}</td>
-                    <td>${product.ubicacion || 'No definida'}</td>
+                    <td>${product.code || product.id}</td>
+                    <td>${product.barcode || '-'}</td>
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>${product.currentStock || 0}</td>
+                    <td>${product.unit}</td>
+                    <td>${product.location || 'No definida'}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td>
                         <button class="btn-small btn-primary" onclick="erp.editProduct('${product.id}')">
@@ -407,8 +420,8 @@ class ERPDashboard {
     }
 
     getStockStatus(product) {
-        const stock = product.stock || 0;
-        const minStock = product.stockMinimo || 10;
+        const stock = product.currentStock || 0;
+        const minStock = product.minStock || 10;
         
         if (stock <= 0) {
             return { class: 'status-danger', text: 'Sin stock' };
@@ -1349,26 +1362,101 @@ class ERPDashboard {
     }
 
     async createProduct(productData) {
-        if (window.erpDB) {
-            return await window.erpDB.saveProduct(productData);
+        try {
+            // Convertir estructura a la de la base de datos
+            const newProduct = {
+                id: productData.id || Date.now(),
+                code: productData.codigo || productData.id,
+                barcode: productData.codigoBarras || '',
+                name: productData.nombre,
+                description: productData.descripcion || '',
+                category: productData.categoria,
+                unit: productData.unidad,
+                currentStock: parseFloat(productData.stock || 0),
+                minStock: parseFloat(productData.stockMinimo || 10),
+                maxStock: parseFloat(productData.stockMinimo || 10) * 5,
+                location: productData.ubicacion || '',
+                supplier: '',
+                dateAdded: new Date().toISOString(),
+                lastModified: new Date().toISOString(),
+                isActive: true
+            };
+
+            // Obtener productos actuales
+            const products = JSON.parse(localStorage.getItem('erp_products') || '[]');
+            
+            // Agregar nuevo producto
+            products.push(newProduct);
+            
+            // Guardar en localStorage
+            localStorage.setItem('erp_products', JSON.stringify(products));
+            
+            return newProduct;
+        } catch (error) {
+            throw new Error('Error creando producto: ' + error.message);
         }
-        throw new Error('Base de datos no disponible');
     }
 
     async updateProduct(productData) {
-        if (window.erpDB) {
-            return await window.erpDB.updateProduct(productData);
+        try {
+            // Obtener productos actuales
+            const products = JSON.parse(localStorage.getItem('erp_products') || '[]');
+            
+            // Encontrar el índice del producto
+            const index = products.findIndex(p => p.id == productData.id);
+            if (index === -1) {
+                throw new Error('Producto no encontrado');
+            }
+            
+            // Actualizar el producto manteniendo la estructura de la DB
+            const updatedProduct = {
+                ...products[index],
+                code: productData.codigo || products[index].code,
+                barcode: productData.codigoBarras || products[index].barcode,
+                name: productData.nombre || products[index].name,
+                description: productData.descripcion || products[index].description,
+                category: productData.categoria || products[index].category,
+                unit: productData.unidad || products[index].unit,
+                currentStock: parseFloat(productData.stock || products[index].currentStock),
+                minStock: parseFloat(productData.stockMinimo || products[index].minStock),
+                location: productData.ubicacion || products[index].location,
+                lastModified: new Date().toISOString()
+            };
+            
+            // Reemplazar el producto
+            products[index] = updatedProduct;
+            
+            // Guardar en localStorage
+            localStorage.setItem('erp_products', JSON.stringify(products));
+            
+            return updatedProduct;
+        } catch (error) {
+            throw new Error('Error actualizando producto: ' + error.message);
         }
-        throw new Error('Base de datos no disponible');
     }
 
     async updateProductStock(productId, newStock) {
-        const product = this.data.products.find(p => p.id === productId);
-        if (product && window.erpDB) {
-            product.stock = newStock;
-            return await window.erpDB.updateProduct(product);
+        try {
+            // Obtener productos actuales
+            const products = JSON.parse(localStorage.getItem('erp_products') || '[]');
+            
+            // Encontrar el índice del producto
+            const index = products.findIndex(p => p.id == productId);
+            if (index === -1) {
+                throw new Error('Producto no encontrado');
+            }
+            
+            // Actualizar solo el stock
+            products[index].currentStock = parseFloat(newStock);
+            products[index].lastModified = new Date().toISOString();
+            
+            // Guardar en localStorage
+            localStorage.setItem('erp_products', JSON.stringify(products));
+            
+            return products[index];
+        } catch (error) {
+            throw new Error('Error actualizando stock: ' + error.message);
         }
-        throw new Error('Producto o base de datos no disponible');
     }
 }
 
