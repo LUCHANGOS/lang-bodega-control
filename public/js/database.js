@@ -10,72 +10,86 @@ class LocalDatabase {
             const inventory = [
                 {
                     id: 1,
-                    name: "Perno M8 x 20mm",
-                    description: "Perno hexagonal métrico 8mm x 20mm, acero inoxidable",
-                    category: "Pernos",
+                    name: "Perno Hexagonal M8 x 20mm",
+                    description: "Perno hexagonal métrico 8x20mm, acero galvanizado, grado 8.8",
+                    category: "Mecánica (Pernería/Fierros)",
                     quantity: 150,
                     minStock: 20,
                     maxStock: 200,
-                    location: "A1-B2",
+                    location: "M-A1-B2",
                     price: 0.50,
-                    supplier: "Ferretería Central",
+                    supplier: "Distribuidora Industrial",
                     dateAdded: "2024-01-15",
                     lastModified: new Date().toISOString()
                 },
                 {
                     id: 2,
-                    name: "Tuerca M8",
-                    description: "Tuerca hexagonal métrica 8mm, acero galvanizado",
-                    category: "Tuercas",
-                    quantity: 200,
-                    minStock: 30,
-                    maxStock: 300,
-                    location: "A1-B3",
-                    price: 0.25,
-                    supplier: "Ferretería Central",
+                    name: "Cable THW 12 AWG",
+                    description: "Cable eléctrico THW calibre 12 AWG, 600V, cobre",
+                    category: "Electricidad",
+                    quantity: 500,
+                    minStock: 100,
+                    maxStock: 1000,
+                    location: "E-C1-A1",
+                    price: 2.80,
+                    supplier: "Eléctrica Industrial",
                     dateAdded: "2024-01-15",
                     lastModified: new Date().toISOString()
                 },
                 {
                     id: 3,
-                    name: "Arandela M8",
-                    description: "Arandela plana métrica 8mm, acero inoxidable",
-                    category: "Arandelas",
-                    quantity: 300,
-                    minStock: 50,
-                    maxStock: 400,
-                    location: "A1-B4",
-                    price: 0.10,
-                    supplier: "Suministros Industriales",
+                    name: "Electrodo E6013 1/8\"",
+                    description: "Electrodo para soldadura E6013 diámetro 1/8\", multipropósito",
+                    category: "Soldadura",
+                    quantity: 50,
+                    minStock: 10,
+                    maxStock: 100,
+                    location: "S-A2-B3",
+                    price: 1.25,
+                    supplier: "Soldaduras Técnicas",
                     dateAdded: "2024-01-16",
                     lastModified: new Date().toISOString()
                 },
                 {
                     id: 4,
-                    name: "Tornillo Phillips M6 x 25mm",
-                    description: "Tornillo cabeza Phillips, métrico 6mm x 25mm",
-                    category: "Tornillos",
-                    quantity: 100,
-                    minStock: 15,
-                    maxStock: 150,
-                    location: "A2-B1",
-                    price: 0.75,
-                    supplier: "Tornillería Especializada",
+                    name: "Pintura Anticorrosiva Roja",
+                    description: "Pintura anticorrosiva base agua, color rojo óxido, 1 galón",
+                    category: "Pintura",
+                    quantity: 12,
+                    minStock: 3,
+                    maxStock: 30,
+                    location: "P-B1-C2",
+                    price: 25.00,
+                    supplier: "Pinturas Industriales",
                     dateAdded: "2024-01-17",
                     lastModified: new Date().toISOString()
                 },
                 {
                     id: 5,
-                    name: "Cable Eléctrico 2.5mm",
-                    description: "Cable eléctrico flexible 2.5mm², cobre, por metro",
-                    category: "Cables",
-                    quantity: 500,
-                    minStock: 100,
-                    maxStock: 1000,
-                    location: "C1-A1",
-                    price: 2.50,
-                    supplier: "Eléctricos SA",
+                    name: "Casco de Seguridad Blanco",
+                    description: "Casco de seguridad industrial, polietileno, blanco, clase G",
+                    category: "EPP",
+                    quantity: 25,
+                    minStock: 5,
+                    maxStock: 50,
+                    location: "EPP-A1-A1",
+                    price: 15.00,
+                    supplier: "Seguridad Industrial",
                     dateAdded: "2024-01-18",
+                    lastModified: new Date().toISOString()
+                },
+                {
+                    id: 6,
+                    name: "Manguera Hidráulica 1/2\"",
+                    description: "Manguera hidráulica 1/2\", presión 3000 PSI, por metro",
+                    category: "Mecánica (Pernería/Fierros)",
+                    quantity: 200,
+                    minStock: 50,
+                    maxStock: 500,
+                    location: "M-C3-B1",
+                    price: 8.50,
+                    supplier: "Hidráulica Industrial",
+                    dateAdded: "2024-01-19",
                     lastModified: new Date().toISOString()
                 }
             ];
@@ -83,10 +97,23 @@ class LocalDatabase {
         }
 
         // Inicializar categorías
+        // Forzar actualización de categorías (remover esta línea después de la primera carga)
+        localStorage.removeItem('bodega_categories');
+        localStorage.removeItem('bodega_inventory');
+        
         if (!localStorage.getItem('bodega_categories')) {
             const categories = [
-                "Pernos", "Tuercas", "Arandelas", "Tornillos", 
-                "Cables", "Herramientas", "Materiales", "Otros"
+                "Electricidad",
+                "Soldadura", 
+                "Mecánica (Pernería/Fierros)",
+                "Pintura",
+                "EPP",
+                "Herramientas",
+                "Lubricantes",
+                "Seguridad Industrial",
+                "Materiales de Construcción",
+                "Instrumentos de Medición",
+                "Otros"
             ];
             localStorage.setItem('bodega_categories', JSON.stringify(categories));
         }
